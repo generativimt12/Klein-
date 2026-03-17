@@ -297,72 +297,54 @@
 
         // ==== AI LOGIC ====
         async function analyzeRoom() {
-        async function analyzeRoom() {
-    const apiKey = getApiKey();
-    if (!apiKey) {
-        openSettings();
-        return;
-    }
-    if (!currentUpload.base64) {
-        showError("אנא העלו תמונה של החדר.");
-        return;
-    }
-
-    const btn = document.getElementById('analyze-btn');
-    const loading = document.getElementById('analysis-loading');
-    btn.disabled = true; document.getElementById('error-box').classList.add('hidden');
-    loading.classList.remove('hidden');
-
-    const sysPrompt = `אתה עוזר וירטואלי לסדר וניקיון. המשתמש העלה תמונה של "${currentUpload.roomType}". החזר רק JSON תקין: {"projectName":"שם","totalTimeEstimate":"זמן","stations":[{"name":"תחנה","time":"זמן","tasks":["משימה"]}],"expertTip":"טיפ"}`;
-    
-    try {
-        console.log("🚀 מתחיל קריאה ל-API של Gemini...");
-        
-        const payload = {
-            contents: [{ parts: [{text: "בנה תוכנית." + document.getElementById('user-input').value}, {inlineData: {mimeType: currentUpload.mimeType, data: currentUpload.base64}}] }],
-            systemInstruction: { parts: [{ text: sysPrompt }] },
-            generationConfig: { responseMimeType: "application/json" }
-        };
-
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        console.log("📌 סטטוס תגובה:", res.status, res.statusText);
-
-        // אם הסטטוס לא תקין (לא בטווח 200-299)
-        if (!res.ok) {
-            const errorData = await res.json();
-            console.error("❌ שגיאה מפורטת מה-API של גוגל:", errorData);
-            // זריקת השגיאה כדי שתיתפס ב-catch למטה
-            throw new Error(errorData.error?.message || "שגיאה לא ידועה מהשרת");
-        }
-        
-        const data = await res.json();
-        console.log("✅ תשובה בהצלחה מה-API:", data);
-
-        const result = JSON.parse(data.candidates[0].content.parts[0].text);
-
-        houseMap.push({
-            id: Date.now().toString(),
-            type: currentUpload.roomType, icon: currentUpload.roomIcon,
-            imageSrc: 'data:' + currentUpload.mimeType + ';base64,' + currentUpload.base64,
-            data: result,
-            taskStates: {} 
-        });
-        
-        saveData(); 
-        showView('home-view');
-    } catch (err) {
-        console.error("🚨 שגיאה כללית בפונקציה analyzeRoom:", err);
-        // הצגת השגיאה האמיתית למשתמש
-        showError(`שגיאה: ${err.message}`);
-    } finally {
-        btn.disabled = false; loading.classList.add('hidden');
-    }
+            const apiKey = getApiKey();
+            if (!apiKey) {
+                openSettings();
+                return;
             }
+            if (!currentUpload.base64) {
+                showError("אנא העלו תמונה של החדר.");
+                return;
+            }
+
+            const btn = document.getElementById('analyze-btn');
+            const loading = document.getElementById('analysis-loading');
+            btn.disabled = true; document.getElementById('error-box').classList.add('hidden');
+            loading.classList.remove('hidden');
+
+            const sysPrompt = `אתה עוזר וירטואלי לסדר וניקיון. המשתמש העלה תמונה של "${currentUpload.roomType}". החזר רק JSON תקין: {"projectName":"שם","totalTimeEstimate":"זמן","stations":[{"name":"תחנה","time":"זמן","tasks":["משימה"]}],"expertTip":"טיפ"}`;
+            
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{text: "בנה תוכנית." + document.getElementById('user-input').value}, {inlineData: {mimeType: currentUpload.mimeType, data: currentUpload.base64}}] }],
+                        systemInstruction: { parts: [{ text: sysPrompt }] },
+                        generationConfig: { responseMimeType: "application/json" }
+                    })
+                });
+
+                if(res.status === 400 || res.status === 403) throw new Error("מפתח ה-API אינו תקין או פג תוקף.");
+                
+                const data = await res.json();
+                const result = JSON.parse(data.candidates[0].content.parts[0].text);
+
+                houseMap.push({
+                    id: Date.now().toString(),
+                    type: currentUpload.roomType, icon: currentUpload.roomIcon,
+                    imageSrc: 'data:' + currentUpload.mimeType + ';base64,' + currentUpload.base64,
+                    data: result,
+                    taskStates: {} // To save checkbox states
+                });
+                
+                saveData(); // Save to LocalStorage!
+                showView('home-view');
+            } catch (err) {
+                showError("שגיאה בניתוח התמונה. ודא שמפתח ה-API תקין בהגדרות.");
+            } finally {
+                btn.disabled = false; loading.classList.add('hidden');
+            }
+        }
 
         function showError(msg) {
             const box = document.getElementById('error-box'); box.innerText = msg; box.classList.remove('hidden');
@@ -465,4 +447,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
