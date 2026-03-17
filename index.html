@@ -4,130 +4,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpringClean AI - ניקיון וסדר בבית</title>
+    <title>PureSpace AI - ניקיון וסדר בבית</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;700;800&display=swap');
 
-        body {
-            font-family: 'Assistant', sans-serif;
-            background-color: #f8fafc;
-            /* Very light slate/blue-gray */
-            color: #334155;
-        }
-
-        /* Clean UI Utilities */
+        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; color: #334155; }
+        
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 1);
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 1); box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
         }
+        .clean-shadow { box-shadow: 0 4px 20px -2px rgba(14, 165, 233, 0.05); }
 
-        .clean-shadow {
-            box-shadow: 0 4px 20px -2px rgba(14, 165, 233, 0.05);
-        }
-
-        /* Animations */
-        .fade-in {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .spinner {
-            border: 3px solid rgba(14, 165, 233, 0.1);
-            border-top-color: #0ea5e9;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            border: 3px solid rgba(14, 165, 233, 0.1); border-top-color: #0ea5e9;
+            border-radius: 50%; width: 24px; height: 24px; animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Scanner line for the "Clean" analysis */
         .clean-scan {
-            position: absolute;
-            width: 100%;
-            height: 3px;
+            position: absolute; width: 100%; height: 3px;
             background: linear-gradient(to right, transparent, #38bdf8, transparent);
-            animation: scan 2.5s ease-in-out infinite;
-            box-shadow: 0 0 12px #38bdf8;
-            opacity: 0.8;
+            animation: scan 2.5s ease-in-out infinite; box-shadow: 0 0 12px #38bdf8; opacity: 0.8;
         }
+        @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
 
-        @keyframes scan {
-            0% {
-                top: 0;
-            }
-
-            50% {
-                top: 100%;
-            }
-
-            100% {
-                top: 0;
-            }
-        }
-
-        /* Roadmap vertical line */
-        .roadmap-line {
-            position: absolute;
-            right: 27px;
-            top: 20px;
-            bottom: 20px;
-            width: 2px;
-            background: #e2e8f0;
-            z-index: 0;
-        }
-
-        /* Custom Scrollbar for clean look */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        .hide-scroll {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .hide-scroll::-webkit-scrollbar {
-            display: none;
-        }
+        .roadmap-line { position: absolute; right: 27px; top: 20px; bottom: 20px; width: 2px; background: #e2e8f0; z-index: 0; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 
 <body class="min-h-screen pb-20 selection:bg-sky-100 selection:text-sky-900">
 
-    <header class="bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-slate-100/50">
+    <header class="bg-white/80 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-100/50">
         <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3 cursor-pointer" onclick="showView('home-view')">
                 <div class="bg-sky-50 text-sky-500 p-2 rounded-2xl">
@@ -137,17 +54,20 @@
                 </div>
                 <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Pure<span class="text-sky-500 font-light">Space</span></h1>
             </div>
-            <div id="header-total-time" class="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-500 bg-slate-50 px-4 py-2 rounded-full">
-                <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                זמן נקיון כולל: <span id="total-house-time" class="text-slate-700 font-bold">0 שעות</span>
+            
+            <div class="flex items-center gap-4">
+                <div id="header-total-time" class="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-500 bg-slate-50 px-4 py-2 rounded-full">
+                    <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    סה"כ משימות: <span id="total-house-time" class="text-slate-700 font-bold">0</span>
+                </div>
+                <button onclick="openSettings()" class="p-2 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full transition-colors" title="הגדרות">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </button>
             </div>
         </div>
     </header>
 
     <main class="max-w-5xl mx-auto px-6 mt-10">
-
         <section id="home-view" class="fade-in block">
             <div class="flex justify-between items-end mb-8">
                 <div>
@@ -155,553 +75,376 @@
                     <p class="text-slate-500 text-lg">סקירה של כל החדרים שמחכים לסידור.</p>
                 </div>
                 <button onclick="showView('add-room-view')" class="bg-sky-500 hover:bg-sky-600 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-sky-500/30 flex items-center gap-2 transform active:scale-95">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     הוסף חדר
                 </button>
             </div>
 
-            <div id="empty-state" class="glass-card rounded-3xl p-16 text-center border border-dashed border-slate-300">
+            <div id="empty-state" class="glass-card rounded-3xl p-16 text-center border border-dashed border-slate-300 hidden">
                 <div class="w-24 h-24 bg-sky-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-12 h-12 text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                    </svg>
+                    <svg class="w-12 h-12 text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 </div>
                 <h3 class="text-2xl font-bold text-slate-700 mb-2">הבית שלכם עדיין ריק ממשימות</h3>
-                <p class="text-slate-500 mb-8 max-w-md mx-auto">הוסיפו חדרים, צלמו את הבלגן, והבינה המלאכותית תבנה לכם תוכנית עבודה נקייה ומסודרת.</p>
+                <p class="text-slate-500 mb-8 max-w-md mx-auto">הוסיפו חדרים, צלמו את הבלגן, והבינה המלאכותית תבנה לכם תוכנית עבודה.</p>
                 <button onclick="showView('add-room-view')" class="text-sky-600 bg-sky-50 hover:bg-sky-100 font-bold py-3 px-8 rounded-full transition-colors">
                     התחילו עכשיו
                 </button>
             </div>
 
-            <div id="rooms-grid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                </div>
+            <div id="rooms-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
 
         <section id="add-room-view" class="fade-in hidden max-w-2xl mx-auto">
             <button onclick="showView('home-view')" class="text-slate-400 hover:text-slate-600 flex items-center gap-1 mb-6 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 חזרה למפת הבית
             </button>
 
             <div class="glass-card rounded-3xl p-8 sm:p-10">
                 <h2 class="text-3xl font-extrabold text-slate-800 mb-2">הוספת אזור חדש</h2>
-                <p class="text-slate-500 mb-8">איזה חדר אנחנו מנקים היום?</p>
-
                 <div class="mb-8">
                     <label class="block text-sm font-bold text-slate-700 mb-3">סוג החדר</label>
-                    <div class="flex flex-wrap gap-3" id="room-types-container">
-                        </div>
+                    <div class="flex flex-wrap gap-3" id="room-types-container"></div>
                 </div>
 
                 <div class="mb-8 relative">
                     <label class="block text-sm font-bold text-slate-700 mb-3">תמונה של האזור (חובה)</label>
                     <input type="file" id="image-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
-                    <label for="image-input" id="drop-zone" class="flex flex-col items-center justify-center w-full h-56 border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50/50 hover:bg-sky-50/30 hover:border-sky-300 transition-all cursor-pointer group overflow-hidden relative">
-
+                    <label for="image-input" id="drop-zone" class="flex flex-col items-center justify-center w-full h-56 border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50/50 hover:bg-sky-50/30 cursor-pointer overflow-hidden relative">
                         <div id="upload-placeholder" class="flex flex-col items-center justify-center p-6 text-center">
-                            <div class="bg-white p-4 rounded-full shadow-sm mb-4 group-hover:scale-110 transition-transform">
-                                <svg class="w-8 h-8 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                            </div>
+                            <span class="text-4xl mb-2">📸</span>
                             <p class="text-slate-700 font-bold">לחצו להעלאת תמונה</p>
-                            <p class="text-sm text-slate-400 mt-1">כדי שה-AI יבין מה צריך לסדר</p>
                         </div>
-
                         <div id="image-preview-container" class="hidden absolute inset-0 w-full h-full bg-slate-100">
-                            <img id="image-preview" class="w-full h-full object-cover" src="" alt="תצוגה מקדימה">
-                            <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <span class="bg-white/90 text-slate-800 text-sm font-bold px-4 py-2 rounded-full">החלף תמונה</span>
-                            </div>
+                            <img id="image-preview" class="w-full h-full object-cover" src="">
                         </div>
                     </label>
                 </div>
 
                 <div class="mb-8">
-                    <label class="block text-sm font-bold text-slate-700 mb-3">דגשים נוספים (אופציונלי)</label>
-                    <textarea id="user-input" rows="2" class="w-full p-4 rounded-2xl border border-slate-200 focus:border-sky-400 focus:ring-4 focus:ring-sky-50 focus:outline-none transition-all text-slate-700 bg-white resize-none" placeholder="למשל: 'אני רוצה לזרוק חצי מהדברים' או 'להתמקד בארון תרופות'"></textarea>
+                    <label class="block text-sm font-bold text-slate-700 mb-3">דגשים נוספים</label>
+                    <textarea id="user-input" rows="2" class="w-full p-4 rounded-2xl border border-slate-200 bg-white" placeholder="למשל: 'להתמקד בארון בגדים'"></textarea>
                 </div>
 
                 <div class="relative">
-                    <button id="analyze-btn" onclick="analyzeRoom()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-900/10 transform active:scale-[0.98] transition-all flex justify-center items-center gap-3 text-lg">
+                    <button id="analyze-btn" onclick="analyzeRoom()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-2xl flex justify-center items-center gap-3 text-lg">
                         <span>נתח וצור תוכנית לחדר</span>
-                        <div id="btn-loader" class="spinner hidden border-white/20 border-t-white"></div>
                     </button>
-
                     <div id="analysis-loading" class="hidden absolute inset-0 bg-white/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center z-10">
-                        <div class="relative w-full h-full overflow-hidden rounded-2xl flex items-center justify-center">
-                            <div class="clean-scan"></div>
-                            <div class="text-center z-10">
-                                <div class="spinner border-sky-200 border-t-sky-500 w-10 h-10 mb-3 mx-auto"></div>
-                                <p class="text-sky-600 font-bold" id="loading-text">מנתח את הבלגן...</p>
-                            </div>
-                        </div>
+                        <div class="clean-scan"></div>
+                        <div class="spinner mb-3 mx-auto"></div>
+                        <p class="text-sky-600 font-bold">מנתח את הבלגן...</p>
                     </div>
                 </div>
-
                 <div id="error-box" class="hidden bg-red-50 text-red-600 p-4 rounded-xl mt-4 text-center text-sm font-medium"></div>
             </div>
         </section>
 
         <section id="roadmap-view" class="fade-in hidden">
             <button onclick="showView('home-view')" class="text-slate-400 hover:text-slate-600 flex items-center gap-1 mb-6 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-                חזרה למפת הבית
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                חזרה
             </button>
-
             <div class="flex flex-col md:flex-row gap-8 items-start">
-
                 <div class="w-full md:w-1/3 space-y-6 sticky top-24">
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 overflow-hidden relative">
-                        <div class="absolute top-0 right-0 w-full h-32 opacity-20 bg-cover bg-center" id="roadmap-room-image-bg"></div>
-                        <div class="absolute top-0 right-0 w-full h-32 bg-gradient-to-b from-white/10 to-white"></div>
-
-                        <div class="relative z-10 pt-16 text-center">
-                            <div class="w-16 h-16 bg-sky-50 text-sky-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-sm border border-sky-100" id="roadmap-room-icon">
-                                🛋️
-                            </div>
-                            <h2 class="text-2xl font-extrabold text-slate-800 mb-1" id="roadmap-room-name">שם החדר</h2>
-                            <p class="text-slate-500 text-sm mb-4" id="roadmap-project-title">פרויקט</p>
-
-                            <div class="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 px-4 py-2 rounded-full text-slate-600 font-bold text-sm">
-                                <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                זמן משוער: <span id="roadmap-time"></span>
-                            </div>
-                        </div>
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center">
+                        <div class="w-16 h-16 bg-sky-50 text-sky-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl" id="roadmap-room-icon"></div>
+                        <h2 class="text-2xl font-extrabold text-slate-800 mb-1" id="roadmap-room-name"></h2>
+                        <p class="text-slate-500 text-sm mb-4" id="roadmap-project-title"></p>
                     </div>
-
-                    <div class="bg-gradient-to-br from-blue-50 to-sky-50 rounded-3xl p-6 border border-blue-100 shadow-sm">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="text-xl">💡</span>
-                            <h4 class="font-bold text-blue-900">תובנה מהתמונה</h4>
-                        </div>
-                        <p id="roadmap-tip" class="text-blue-800 text-sm leading-relaxed"></p>
+                    <div class="bg-blue-50 rounded-3xl p-6 border border-blue-100">
+                        <h4 class="font-bold text-blue-900 mb-2">💡 תובנה</h4>
+                        <p id="roadmap-tip" class="text-blue-800 text-sm"></p>
                     </div>
                 </div>
-
                 <div class="w-full md:w-2/3 glass-card rounded-3xl p-8 relative">
                     <h3 class="text-xl font-bold text-slate-800 mb-8 border-b border-slate-100 pb-4">מסלול הניקיון שלך</h3>
-
                     <div class="relative pr-8 pb-4">
                         <div class="roadmap-line"></div>
-                        <div id="timeline-container" class="space-y-10 relative z-10">
-                            </div>
+                        <div id="timeline-container" class="space-y-10 relative z-10"></div>
                     </div>
                 </div>
-
             </div>
         </section>
-
     </main>
 
+    <div id="settings-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300" id="settings-content">
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">הגדרות מערכת</h3>
+            <p class="text-slate-500 text-sm mb-6">הגדירו את מפתח ה-API שלכם. המפתח נשמר רק בדפדפן שלכם בצורה מאובטחת.</p>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-slate-700 mb-2">Gemini API Key</label>
+                <input type="password" id="api-key-input" class="w-full p-3 rounded-xl border border-slate-200 focus:border-sky-400 focus:outline-none" placeholder="AIzaSy...">
+                <p class="text-xs text-slate-400 mt-2">אין לכם מפתח? <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-sky-500 hover:underline">לחצו כאן ליצירת מפתח חינם</a>.</p>
+            </div>
+            
+            <div class="flex gap-3 justify-end">
+                <button onclick="closeSettings()" class="px-5 py-2.5 rounded-xl font-medium text-slate-600 hover:bg-slate-100 transition-colors">ביטול</button>
+                <button onclick="saveSettings()" class="px-5 py-2.5 rounded-xl font-bold text-white bg-slate-800 hover:bg-slate-900 transition-colors">שמור הגדרות</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // API Settings
-        const apiKey = ""; // Managed by environment
         const model = "gemini-2.0-flash-exp";
+        let houseMap = [];
+        let currentUpload = { base64: null, mimeType: null, roomType: 'חדר שינה', roomIcon: '🛏️' };
 
-        // App State
-        let houseMap = []; // Array to store all analyzed rooms
-        let currentUpload = {
-            base64: null,
-            mimeType: null,
-            roomType: 'חדר שינה', // Default
-            roomIcon: '🛏️'
-        };
-
-        // Room Types Configuration
-        const roomTypes = [{
-                id: 'bedroom',
-                name: 'חדר שינה',
-                icon: '🛏️'
-            },
-            {
-                id: 'kids',
-                name: 'חדר ילדים',
-                icon: '🧸'
-            },
-            {
-                id: 'kitchen',
-                name: 'מטבח',
-                icon: '🍳'
-            },
-            {
-                id: 'living',
-                name: 'סלון',
-                icon: '🛋️'
-            },
-            {
-                id: 'office',
-                name: 'משרד / עבודה',
-                icon: '💻'
-            },
-            {
-                id: 'storage',
-                name: 'מחסן',
-                icon: '📦'
-            },
-            {
-                id: 'bath',
-                name: 'חדר רחצה',
-                icon: '🛁'
-            },
-            {
-                id: 'other',
-                name: 'אחר',
-                icon: '✨'
-            }
+        const roomTypes = [
+            { id: 'bedroom', name: 'חדר שינה', icon: '🛏️' }, { id: 'kids', name: 'חדר ילדים', icon: '🧸' },
+            { id: 'kitchen', name: 'מטבח', icon: '🍳' }, { id: 'living', name: 'סלון', icon: '🛋️' },
+            { id: 'office', name: 'משרד', icon: '💻' }, { id: 'bath', name: 'חדר רחצה', icon: '🛁' }
         ];
 
-        // Initialization
+        // Init App
         document.addEventListener('DOMContentLoaded', () => {
             renderRoomTypeSelector();
+            loadData(); // Load data from LocalStorage
             showView('home-view');
         });
 
-        // View Navigation
-        function showView(viewId) {
-            document.getElementById('home-view').classList.add('hidden');
-            document.getElementById('add-room-view').classList.add('hidden');
-            document.getElementById('roadmap-view').classList.add('hidden');
+        // ==== LOCAL STORAGE FUNCTIONS ====
+        function loadData() {
+            const savedRooms = localStorage.getItem('pureSpace_rooms');
+            if (savedRooms) houseMap = JSON.parse(savedRooms);
+        }
 
-            document.getElementById(viewId).classList.remove('hidden');
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+        function saveData() {
+            localStorage.setItem('pureSpace_rooms', JSON.stringify(houseMap));
+        }
 
-            if (viewId === 'home-view') {
-                renderHouseMap();
-            } else if (viewId === 'add-room-view') {
-                resetAddRoomForm();
+        function getApiKey() {
+            return localStorage.getItem('pureSpace_api_key') || "";
+        }
+
+        // ==== SETTINGS MODAL ====
+        function openSettings() {
+            const modal = document.getElementById('settings-modal');
+            document.getElementById('api-key-input').value = getApiKey();
+            modal.classList.remove('hidden');
+            // Small delay to allow display:block to apply before animating opacity
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                document.getElementById('settings-content').classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeSettings() {
+            const modal = document.getElementById('settings-modal');
+            modal.classList.add('opacity-0');
+            document.getElementById('settings-content').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function saveSettings() {
+            const key = document.getElementById('api-key-input').value.trim();
+            if (key) {
+                localStorage.setItem('pureSpace_api_key', key);
+                closeSettings();
+            } else {
+                alert("אנא הכנס מפתח חוקי");
             }
         }
 
-        // Render Room Type Chips
+        // ==== UI NAVIGATION ====
+        function showView(viewId) {
+            ['home-view', 'add-room-view', 'roadmap-view'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            document.getElementById(viewId).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (viewId === 'home-view') renderHouseMap();
+            else if (viewId === 'add-room-view') resetAddRoomForm();
+        }
+
         function renderRoomTypeSelector() {
             const container = document.getElementById('room-types-container');
             container.innerHTML = '';
-
             roomTypes.forEach((type, index) => {
-                const isSelected = index === 0; // First is selected by default
                 const btn = document.createElement('button');
-                btn.className = `flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-200 border ${isSelected ? 'bg-slate-800 text-white border-slate-800 shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'}`;
-                btn.innerHTML = `<span class="text-lg">${type.icon}</span> <span>${type.name}</span>`;
-
-                btn.onclick = (e) => {
-                    // Visual update
-                    Array.from(container.children).forEach(c => {
-                        c.classList.remove('bg-slate-800', 'text-white', 'border-slate-800', 'shadow-md');
-                        c.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
-                    });
-                    btn.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
-                    btn.classList.add('bg-slate-800', 'text-white', 'border-slate-800', 'shadow-md');
-
-                    // State update
-                    currentUpload.roomType = type.name;
-                    currentUpload.roomIcon = type.icon;
+                btn.className = `flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all border ${index === 0 ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-600 border-slate-200'}`;
+                btn.innerHTML = `<span>${type.icon}</span> <span>${type.name}</span>`;
+                btn.onclick = () => {
+                    Array.from(container.children).forEach(c => c.className = 'flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all border bg-white text-slate-600 border-slate-200');
+                    btn.className = 'flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all border bg-slate-800 text-white border-slate-800 shadow-md';
+                    currentUpload.roomType = type.name; currentUpload.roomIcon = type.icon;
                 };
                 container.appendChild(btn);
             });
         }
 
-        // Handle Image Upload
         function handleImageUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             currentUpload.mimeType = file.type;
             const reader = new FileReader();
-
             reader.onload = (e) => {
                 document.getElementById('image-preview').src = e.target.result;
                 document.getElementById('upload-placeholder').classList.add('hidden');
                 document.getElementById('image-preview-container').classList.remove('hidden');
-                document.getElementById('drop-zone').classList.add('border-sky-300');
-
-                // Save Base64 for API
                 currentUpload.base64 = e.target.result.split(',')[1];
             };
-
             reader.readAsDataURL(file);
         }
 
-        // Drag and Drop
-        const dropZone = document.getElementById('drop-zone');
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('bg-sky-50', 'border-sky-300');
-        });
-        dropZone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('bg-sky-50', 'border-sky-300');
-        });
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('bg-sky-50', 'border-sky-300');
-            if (e.dataTransfer.files.length) {
-                document.getElementById('image-input').files = e.dataTransfer.files;
-                handleImageUpload({
-                    target: {
-                        files: e.dataTransfer.files
-                    }
-                });
-            }
-        });
-
-        // Reset Form
         function resetAddRoomForm() {
             document.getElementById('user-input').value = '';
             document.getElementById('image-input').value = '';
             currentUpload.base64 = null;
-            currentUpload.mimeType = null;
-
             document.getElementById('upload-placeholder').classList.remove('hidden');
             document.getElementById('image-preview-container').classList.add('hidden');
-            document.getElementById('drop-zone').classList.remove('border-sky-300');
             document.getElementById('error-box').classList.add('hidden');
-
-            // Re-select first room type visually
-            const firstBtn = document.getElementById('room-types-container').firstElementChild;
-            if (firstBtn) firstBtn.click();
         }
 
-        // AI Analysis
+        // ==== AI LOGIC ====
         async function analyzeRoom() {
+            const apiKey = getApiKey();
+            if (!apiKey) {
+                openSettings();
+                return;
+            }
             if (!currentUpload.base64) {
-                showError("אנא העלו תמונה של החדר כדי שהבינה המלאכותית תוכל לעזור.");
+                showError("אנא העלו תמונה של החדר.");
                 return;
             }
 
-            const userInput = document.getElementById('user-input').value.trim();
             const btn = document.getElementById('analyze-btn');
-            const loadingOverlay = document.getElementById('analysis-loading');
-            const errorBox = document.getElementById('error-box');
+            const loading = document.getElementById('analysis-loading');
+            btn.disabled = true; document.getElementById('error-box').classList.add('hidden');
+            loading.classList.remove('hidden');
 
-            // Set UI to loading
-            btn.disabled = true;
-            errorBox.classList.add('hidden');
-            loadingOverlay.classList.remove('hidden');
-
-            const systemPrompt = `אתה עוזר וירטואלי לעיצוב וסידור הבית. המשתמש העלה תמונה של "${currentUpload.roomType}".
-            נתח את התמונה, זהה את מוקדי הבלגן והחפצים, ובנה מפת דרכים לסידור יעיל לפי תחנות.
-            הקפד על עיצוב נקי ומינימליסטי בטקסטים שלך. אל תדבר על נושאים דתיים או איסורים.
+            const sysPrompt = `אתה עוזר וירטואלי לסדר וניקיון. המשתמש העלה תמונה של "${currentUpload.roomType}". החזר רק JSON תקין: {"projectName":"שם","totalTimeEstimate":"זמן","stations":[{"name":"תחנה","time":"זמן","tasks":["משימה"]}],"expertTip":"טיפ"}`;
             
-            חובה להחזיר רק JSON תקין במבנה הבא:
-            {
-              "projectName": "שם קצר לפרויקט (למשל: ארגון המדפים)",
-              "totalTimeEstimate": "זמן מוערך (למשל: 45 דק')",
-              "stations": [
-                {
-                  "name": "שם התחנה (למשל: שידה ימנית)",
-                  "time": "זמן",
-                  "tasks": ["משימה 1 ממוקדת", "משימה 2 ממוקדת"]
-                }
-              ],
-              "expertTip": "טיפ קצר ופרקטי לשמירה על סדר שמבוסס על מה שרואים בתמונה."
-            }`;
-
-            const contents = [{
-                parts: []
-            }];
-
-            let promptText = `זה חדר מסוג: ${currentUpload.roomType}. אנא בנה לו תוכנית ניקיון.`;
-            if (userInput) promptText += ` המשתמש הוסיף: "${userInput}".`;
-
-            contents[0].parts.push({
-                text: promptText
-            });
-            contents[0].parts.push({
-                inlineData: {
-                    mimeType: currentUpload.mimeType,
-                    data: currentUpload.base64
-                }
-            });
-
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: contents,
-                        systemInstruction: {
-                            parts: [{
-                                text: systemPrompt
-                            }]
-                        },
-                        generationConfig: {
-                            responseMimeType: "application/json"
-                        }
+                        contents: [{ parts: [{text: "בנה תוכנית." + document.getElementById('user-input').value}, {inlineData: {mimeType: currentUpload.mimeType, data: currentUpload.base64}}] }],
+                        systemInstruction: { parts: [{ text: sysPrompt }] },
+                        generationConfig: { responseMimeType: "application/json" }
                     })
                 });
 
-                const data = await response.json();
-
-                if (!data.candidates || !data.candidates[0].content) {
-                    throw new Error("שגיאה בקבלת נתונים מהשרת.");
-                }
-
+                if(res.status === 400 || res.status === 403) throw new Error("מפתח ה-API אינו תקין או פג תוקף.");
+                
+                const data = await res.json();
                 const result = JSON.parse(data.candidates[0].content.parts[0].text);
 
-                // Create Room Object and add to Map
-                const newRoom = {
+                houseMap.push({
                     id: Date.now().toString(),
-                    type: currentUpload.roomType,
-                    icon: currentUpload.roomIcon,
+                    type: currentUpload.roomType, icon: currentUpload.roomIcon,
                     imageSrc: 'data:' + currentUpload.mimeType + ';base64,' + currentUpload.base64,
                     data: result,
-                    isCompleted: false
-                };
-
-                houseMap.push(newRoom);
-
-                // Go to Home View to see the new map
+                    taskStates: {} // To save checkbox states
+                });
+                
+                saveData(); // Save to LocalStorage!
                 showView('home-view');
-
-            } catch (error) {
-                console.error("API Error:", error);
-                showError("אופס, משהו השתבש בניתוח התמונה. נסו שוב.");
+            } catch (err) {
+                showError("שגיאה בניתוח התמונה. ודא שמפתח ה-API תקין בהגדרות.");
             } finally {
-                btn.disabled = false;
-                loadingOverlay.classList.add('hidden');
+                btn.disabled = false; loading.classList.add('hidden');
             }
         }
 
         function showError(msg) {
-            const errorBox = document.getElementById('error-box');
-            errorBox.innerText = msg;
-            errorBox.classList.remove('hidden');
+            const box = document.getElementById('error-box'); box.innerText = msg; box.classList.remove('hidden');
         }
 
-        // Render Dashboard
+        // ==== RENDER DATA ====
         function renderHouseMap() {
-            const emptyState = document.getElementById('empty-state');
             const grid = document.getElementById('rooms-grid');
-            const headerTime = document.getElementById('header-total-time');
-            const totalTimeSpan = document.getElementById('total-house-time');
+            const empty = document.getElementById('empty-state');
+            document.getElementById('total-house-time').innerText = houseMap.length;
 
             if (houseMap.length === 0) {
-                emptyState.classList.remove('hidden');
-                grid.classList.add('hidden');
-                headerTime.classList.add('hidden');
-                return;
+                empty.classList.remove('hidden'); grid.classList.add('hidden'); return;
             }
+            empty.classList.add('hidden'); grid.classList.remove('hidden'); grid.innerHTML = '';
 
-            emptyState.classList.add('hidden');
-            grid.classList.remove('hidden');
-            headerTime.classList.remove('hidden');
-            grid.innerHTML = '';
-
-            // Render Cards
-            houseMap.forEach((room, index) => {
+            houseMap.forEach(room => {
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-3xl p-5 border border-slate-100 clean-shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group flex flex-col h-full";
-
+                card.className = "bg-white rounded-3xl p-5 border border-slate-100 clean-shadow cursor-pointer hover:-translate-y-1 transition-transform flex flex-col";
                 card.innerHTML = `
                     <div class="relative h-32 rounded-2xl overflow-hidden mb-4 bg-slate-100">
-                        <img src="${room.imageSrc}" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500" alt="Room">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent flex items-end p-4">
-                            <span class="text-white font-bold flex items-center gap-2">
-                                <span class="bg-white/20 px-2 py-0.5 rounded-md backdrop-blur-md">${room.icon}</span>
-                                ${room.type}
-                            </span>
-                        </div>
+                        <img src="${room.imageSrc}" class="w-full h-full object-cover opacity-90">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 flex items-end p-4"><span class="text-white font-bold">${room.icon} ${room.type}</span></div>
                     </div>
-                    <div class="flex-1 flex flex-col justify-between">
-                        <div>
-                            <h4 class="font-bold text-slate-800 text-lg mb-1 leading-tight">${room.data.projectName}</h4>
-                            <p class="text-slate-500 text-sm mb-4 line-clamp-2">${room.data.expertTip}</p>
-                        </div>
-                        <div class="flex items-center justify-between border-t border-slate-50 pt-3 mt-auto">
-                            <span class="text-sm font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full">${room.data.totalTimeEstimate}</span>
-                            <button class="text-slate-400 group-hover:text-slate-800 transition-colors" title="מחק חדר" onclick="event.stopPropagation(); deleteRoom('${room.id}')">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-slate-800 text-lg mb-1">${room.data.projectName}</h4>
+                        <p class="text-slate-500 text-sm mb-4 line-clamp-2">${room.data.expertTip}</p>
+                    </div>
+                    <div class="flex items-center justify-between border-t pt-3 mt-auto">
+                        <span class="text-sm font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full">${room.data.totalTimeEstimate}</span>
+                        <button class="text-slate-400 hover:text-red-500" onclick="event.stopPropagation(); deleteRoom('${room.id}')">מחק</button>
                     </div>
                 `;
-
                 card.onclick = () => renderRoadmap(room);
                 grid.appendChild(card);
             });
-
-            totalTimeSpan.innerText = `${houseMap.length} משימות`;
         }
 
         function deleteRoom(id) {
-            houseMap = houseMap.filter(r => r.id !== id);
-            renderHouseMap();
+            if(confirm('למחוק את החדר הזה?')) {
+                houseMap = houseMap.filter(r => r.id !== id);
+                saveData(); // Save deletion to LocalStorage!
+                renderHouseMap();
+            }
         }
 
-        // Render Specific Room Roadmap
         function renderRoadmap(room) {
             showView('roadmap-view');
-
-            // Populate Header Info
             document.getElementById('roadmap-room-icon').innerText = room.icon;
             document.getElementById('roadmap-room-name').innerText = room.type;
             document.getElementById('roadmap-project-title').innerText = room.data.projectName;
-            document.getElementById('roadmap-time').innerText = room.data.totalTimeEstimate;
             document.getElementById('roadmap-tip').innerText = room.data.expertTip;
-            document.getElementById('roadmap-room-image-bg').style.backgroundImage = `url(${room.imageSrc})`;
 
             const container = document.getElementById('timeline-container');
             container.innerHTML = '';
 
-            room.data.stations.forEach((station, index) => {
-                const stationEl = document.createElement('div');
-                stationEl.className = `relative flex items-start gap-6 w-full group`;
-
-                // Node
-                const nodeHtml = `
-                    <div class="relative z-10 flex flex-col items-center pt-1">
-                        <div class="w-10 h-10 bg-white rounded-full border-[3px] border-slate-200 group-hover:border-sky-400 shadow-sm flex items-center justify-center font-bold text-slate-400 group-hover:text-sky-500 transition-colors relative z-10 bg-white">
-                            ${index + 1}
-                        </div>
-                    </div>
-                `;
-
-                // Tasks
-                const tasksHtml = station.tasks.map(task => `
-                    <label class="flex items-start gap-3 text-slate-600 cursor-pointer group/task">
-                        <input type="checkbox" class="peer hidden" onchange="this.parentElement.classList.toggle('opacity-50'); this.parentElement.classList.toggle('line-through');">
-                        <div class="w-5 h-5 rounded-[6px] border-2 border-slate-300 peer-checked:bg-sky-500 peer-checked:border-sky-500 mt-0.5 flex-shrink-0 transition-all flex items-center justify-center text-white">
+            room.data.stations.forEach((station, sIdx) => {
+                const tasksHtml = station.tasks.map((task, tIdx) => {
+                    const taskId = `s${sIdx}_t${tIdx}`;
+                    const isChecked = room.taskStates && room.taskStates[taskId] ? 'checked' : '';
+                    const labelClass = isChecked ? 'opacity-50 line-through' : '';
+                    
+                    return `
+                    <label class="flex items-start gap-3 text-slate-600 cursor-pointer ${labelClass}" id="label_${room.id}_${taskId}">
+                        <input type="checkbox" class="peer hidden" ${isChecked} onchange="toggleTask('${room.id}', '${taskId}', this)">
+                        <div class="w-5 h-5 rounded-[6px] border-2 border-slate-300 peer-checked:bg-sky-500 peer-checked:border-sky-500 flex-shrink-0 flex items-center justify-center text-white">
                             <svg class="w-3.5 h-3.5 opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                         </div>
-                        <span class="leading-relaxed select-none peer-checked:text-slate-400">${task}</span>
+                        <span>${task}</span>
                     </label>
-                `).join('');
+                `}).join('');
 
-                stationEl.innerHTML = `
-                    ${nodeHtml}
-                    <div class="flex-1 pb-10">
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="font-bold text-lg text-slate-800">${station.name}</h4>
-                            <span class="text-sm font-medium text-slate-400 flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                ${station.time}
-                            </span>
+                container.innerHTML += `
+                    <div class="relative flex items-start gap-6 w-full">
+                        <div class="relative z-10 w-10 h-10 bg-white rounded-full border-[3px] border-slate-200 flex items-center justify-center font-bold text-slate-400">
+                            ${sIdx + 1}
                         </div>
-                        <div class="space-y-3 bg-slate-50/50 p-5 rounded-2xl border border-slate-100">
-                            ${tasksHtml}
+                        <div class="flex-1 pb-10">
+                            <h4 class="font-bold text-lg text-slate-800 mb-4">${station.name} (${station.time})</h4>
+                            <div class="space-y-3 bg-slate-50/50 p-5 rounded-2xl border border-slate-100">${tasksHtml}</div>
                         </div>
                     </div>
                 `;
-
-                container.appendChild(stationEl);
             });
+        }
+
+        // Toggle task completion and save to LocalStorage
+        window.toggleTask = function(roomId, taskId, checkboxElem) {
+            const room = houseMap.find(r => r.id === roomId);
+            if(room) {
+                if(!room.taskStates) room.taskStates = {};
+                room.taskStates[taskId] = checkboxElem.checked;
+                saveData(); // Save to LocalStorage!
+                
+                // Update UI visually
+                const label = document.getElementById(`label_${roomId}_${taskId}`);
+                if(checkboxElem.checked) label.classList.add('opacity-50', 'line-through');
+                else label.classList.remove('opacity-50', 'line-through');
+            }
         }
     </script>
 </body>
-
-                                        </html>
+</html>
