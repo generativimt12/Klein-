@@ -127,7 +127,7 @@
                 </div>
 
                 <div class="relative">
-                    <button id="analyze-btn" onclick="analyzeRoom()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-2xl flex justify-center items-center gap-3 text-lg">
+                    <button id="analyze-btn" onclick="analyzeRoom()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-2xl flex justify-center items-center gap-3 text-lg transition-colors">
                         <span>נתח וצור תוכנית לחדר</span>
                     </button>
                     <div id="analysis-loading" class="hidden absolute inset-0 bg-white/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center z-10">
@@ -136,7 +136,6 @@
                         <p class="text-sky-600 font-bold">מנתח את הבלגן...</p>
                     </div>
                 </div>
-                <div id="error-box" class="hidden bg-red-50 text-red-600 p-4 rounded-xl mt-4 text-center text-sm font-medium"></div>
             </div>
         </section>
 
@@ -171,12 +170,25 @@
     <div id="settings-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300" id="settings-content">
             <h3 class="text-2xl font-bold text-slate-800 mb-2">הגדרות מערכת</h3>
-            <p class="text-slate-500 text-sm mb-6">הגדירו את מפתח ה-API שלכם. המפתח נשמר רק בדפדפן שלכם בצורה מאובטחת.</p>
+            <p class="text-slate-500 text-sm mb-6">הגדירו את מפתח ה-API ואת המודל שבו תרצו להשתמש.</p>
             
-            <div class="mb-6">
+            <div class="mb-5">
                 <label class="block text-sm font-bold text-slate-700 mb-2">Gemini API Key</label>
-                <input type="password" id="api-key-input" class="w-full p-3 rounded-xl border border-slate-200 focus:border-sky-400 focus:outline-none" placeholder="AIzaSy...">
+                <div class="flex gap-2">
+                    <input type="password" id="api-key-input" class="w-full p-3 rounded-xl border border-slate-200 focus:border-sky-400 focus:outline-none font-mono" placeholder="AIzaSy...">
+                    <button onclick="testApiKey()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 rounded-xl font-bold transition-colors whitespace-nowrap text-sm">בדוק מפתח</button>
+                </div>
+                <div id="test-key-result" class="text-sm mt-2 font-medium hidden"></div>
                 <p class="text-xs text-slate-400 mt-2">אין לכם מפתח? <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-sky-500 hover:underline">לחצו כאן ליצירת מפתח חינם</a>.</p>
+            </div>
+
+            <div class="mb-8">
+                <label class="block text-sm font-bold text-slate-700 mb-2">מודל AI (Model)</label>
+                <select id="model-select" class="w-full p-3 rounded-xl border border-slate-200 focus:border-sky-400 focus:outline-none bg-white">
+                    <option value="gemini-1.5-flash">Gemini 1.5 Flash (מומלץ, מהיר)</option>
+                    <option value="gemini-1.5-pro">Gemini 1.5 Pro (חכם יותר, איטי יותר)</option>
+                    <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash Exp (גרסת ניסיון)</option>
+                </select>
             </div>
             
             <div class="flex gap-3 justify-end">
@@ -186,8 +198,22 @@
         </div>
     </div>
 
+    <div id="error-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300 relative border-t-4 border-red-500" id="error-content">
+            <div class="w-12 h-12 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2" id="error-modal-title">אופס, משהו השתבש</h3>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+                <p class="text-slate-700 text-sm font-mono break-words" id="error-modal-details" dir="ltr"></p>
+            </div>
+            <div class="flex justify-end">
+                <button onclick="closeErrorModal()" class="px-5 py-2.5 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 transition-colors">הבנתי, סגור</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const model = "gemini-1.5-flash";
         let houseMap = [];
         let currentUpload = { base64: null, mimeType: null, roomType: 'חדר שינה', roomIcon: '🛏️' };
 
@@ -204,7 +230,7 @@
             showView('home-view');
         });
 
-        // ==== LOCAL STORAGE FUNCTIONS ====
+        // ==== LOCAL STORAGE & SETTINGS ====
         function loadData() {
             const savedRooms = localStorage.getItem('pureSpace_rooms');
             if (savedRooms) houseMap = JSON.parse(savedRooms);
@@ -218,12 +244,17 @@
             return localStorage.getItem('pureSpace_api_key') || "";
         }
 
-        // ==== SETTINGS MODAL ====
+        function getSelectedModel() {
+            return localStorage.getItem('pureSpace_model') || "gemini-1.5-flash";
+        }
+
         function openSettings() {
             const modal = document.getElementById('settings-modal');
             document.getElementById('api-key-input').value = getApiKey();
+            document.getElementById('model-select').value = getSelectedModel();
+            document.getElementById('test-key-result').classList.add('hidden');
+            
             modal.classList.remove('hidden');
-            // Small delay to allow display:block to apply before animating opacity
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 document.getElementById('settings-content').classList.remove('scale-95');
@@ -239,12 +270,68 @@
 
         function saveSettings() {
             const key = document.getElementById('api-key-input').value.trim();
+            const model = document.getElementById('model-select').value;
+            
             if (key) {
                 localStorage.setItem('pureSpace_api_key', key);
+                localStorage.setItem('pureSpace_model', model);
                 closeSettings();
             } else {
-                alert("אנא הכנס מפתח חוקי");
+                showErrorModal("שגיאת שרת", "אנא הכנס מפתח API חוקי כדי לשמור.");
             }
+        }
+
+        // ==== API KEY TESTING ====
+        async function testApiKey() {
+            const key = document.getElementById('api-key-input').value.trim();
+            const resultBox = document.getElementById('test-key-result');
+            
+            if (!key) {
+                resultBox.className = "text-sm mt-2 font-medium text-red-500 block";
+                resultBox.innerText = "אנא הזן מפתח לפני הבדיקה.";
+                return;
+            }
+
+            resultBox.className = "text-sm mt-2 font-medium text-sky-500 block";
+            resultBox.innerText = "בודק חיבור לשרת...";
+
+            try {
+                // בדיקה קלה שמבקשת את רשימת המודלים - עולה 0 טוקנים ומוודאת שהרשת והמפתח תקינים
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+                
+                if (res.ok) {
+                    resultBox.className = "text-sm mt-2 font-bold text-emerald-500 block";
+                    resultBox.innerText = "✓ המפתח תקין והחיבור עובד נהדר!";
+                } else {
+                    const errorData = await res.json();
+                    resultBox.className = "text-sm mt-2 font-bold text-red-500 block";
+                    resultBox.innerText = `✗ שגיאה ${res.status}: ${errorData.error?.message || "המפתח נדחה"}`;
+                }
+            } catch (err) {
+                resultBox.className = "text-sm mt-2 font-bold text-red-500 block";
+                resultBox.innerText = "✗ שגיאת רשת: לא הצלחנו להתחבר. ייתכן שיש חסימה (נטפרי) או שגיאת CORS.";
+                console.error("Test API Key Error:", err);
+            }
+        }
+
+        // ==== ERROR HANDLING UI ====
+        function showErrorModal(title, details) {
+            document.getElementById('error-modal-title').innerText = title;
+            document.getElementById('error-modal-details').innerText = details;
+            
+            const modal = document.getElementById('error-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                document.getElementById('error-content').classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeErrorModal() {
+            const modal = document.getElementById('error-modal');
+            modal.classList.add('opacity-0');
+            document.getElementById('error-content').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
         }
 
         // ==== UI NAVIGATION ====
@@ -292,30 +379,31 @@
             currentUpload.base64 = null;
             document.getElementById('upload-placeholder').classList.remove('hidden');
             document.getElementById('image-preview-container').classList.add('hidden');
-            document.getElementById('error-box').classList.add('hidden');
         }
 
         // ==== AI LOGIC ====
         async function analyzeRoom() {
             const apiKey = getApiKey();
+            const activeModel = getSelectedModel();
+
             if (!apiKey) {
                 openSettings();
                 return;
             }
             if (!currentUpload.base64) {
-                showError("אנא העלו תמונה של החדר.");
+                showErrorModal("חסר מידע", "אנא העלו תמונה של החדר כדי שנוכל לנתח אותו.");
                 return;
             }
 
             const btn = document.getElementById('analyze-btn');
             const loading = document.getElementById('analysis-loading');
-            btn.disabled = true; document.getElementById('error-box').classList.add('hidden');
+            btn.disabled = true; 
             loading.classList.remove('hidden');
 
             const sysPrompt = `אתה עוזר וירטואלי לסדר וניקיון. המשתמש העלה תמונה של "${currentUpload.roomType}". החזר רק JSON תקין: {"projectName":"שם","totalTimeEstimate":"זמן","stations":[{"name":"תחנה","time":"זמן","tasks":["משימה"]}],"expertTip":"טיפ"}`;
             
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${activeModel}:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ parts: [{text: "בנה תוכנית." + document.getElementById('user-input').value}, {inlineData: {mimeType: currentUpload.mimeType, data: currentUpload.base64}}] }],
@@ -324,30 +412,57 @@
                     })
                 });
 
-                if(res.status === 400 || res.status === 403) throw new Error("מפתח ה-API אינו תקין או פג תוקף.");
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(`HTTP ${res.status} - ${errorText}`);
+                }
                 
                 const data = await res.json();
-                const result = JSON.parse(data.candidates[0].content.parts[0].text);
+                
+                // ודא שיש תוכן תקין בתשובה
+                if (!data.candidates || !data.candidates[0].content.parts[0].text) {
+                     throw new Error("התקבלה תשובה ריקה מהשרת.");
+                }
+
+                const resultText = data.candidates[0].content.parts[0].text;
+                let parsedResult;
+                try {
+                    parsedResult = JSON.parse(resultText);
+                } catch (parseErr) {
+                    throw new Error("ה-AI לא החזיר JSON תקין: " + resultText.substring(0, 100) + "...");
+                }
 
                 houseMap.push({
                     id: Date.now().toString(),
                     type: currentUpload.roomType, icon: currentUpload.roomIcon,
                     imageSrc: 'data:' + currentUpload.mimeType + ';base64,' + currentUpload.base64,
-                    data: result,
-                    taskStates: {} // To save checkbox states
+                    data: parsedResult,
+                    taskStates: {}
                 });
                 
-                saveData(); // Save to LocalStorage!
+                saveData();
                 showView('home-view');
+
             } catch (err) {
-                showError("שגיאה בניתוח התמונה. ודא שמפתח ה-API תקין בהגדרות.");
+                console.error(err);
+                let errorTitle = "שגיאה בתקשורת מול גוגל";
+                let errorMsg = err.message;
+                
+                // בדיקת שגיאות נפוצות של רשת (חסימות נטפרי / CORS / SSL)
+                if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+                    errorTitle = "שגיאת רשת חמורה";
+                    errorMsg = "הדפדפן נכשל ביצירת קשר עם השרתים של גוגל. \n\nסיבות אפשריות:\n1. חסימה של הסינון (נטפרי).\n2. חסרה תעודת אבטחה של נטפרי.\n3. שגיאת CORS (במידה ואתה מריץ כקובץ מקומי).";
+                } 
+                // בדיקת שגיאות מפתח API
+                else if (err.message.includes('HTTP 400') || err.message.includes('HTTP 403')) {
+                    errorTitle = "בעיה במפתח או במודל";
+                    errorMsg = "הבקשה נדחתה על ידי גוגל (שגיאה 400/403). ודא שמפתח ה-API תקין בהגדרות, או נסה להחליף מודל.\n\n" + err.message;
+                }
+
+                showErrorModal(errorTitle, errorMsg);
             } finally {
                 btn.disabled = false; loading.classList.add('hidden');
             }
-        }
-
-        function showError(msg) {
-            const box = document.getElementById('error-box'); box.innerText = msg; box.classList.remove('hidden');
         }
 
         // ==== RENDER DATA ====
@@ -370,11 +485,11 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 flex items-end p-4"><span class="text-white font-bold">${room.icon} ${room.type}</span></div>
                     </div>
                     <div class="flex-1">
-                        <h4 class="font-bold text-slate-800 text-lg mb-1">${room.data.projectName}</h4>
-                        <p class="text-slate-500 text-sm mb-4 line-clamp-2">${room.data.expertTip}</p>
+                        <h4 class="font-bold text-slate-800 text-lg mb-1">${room.data.projectName || "פרויקט חדש"}</h4>
+                        <p class="text-slate-500 text-sm mb-4 line-clamp-2">${room.data.expertTip || ""}</p>
                     </div>
                     <div class="flex items-center justify-between border-t pt-3 mt-auto">
-                        <span class="text-sm font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full">${room.data.totalTimeEstimate}</span>
+                        <span class="text-sm font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full">${room.data.totalTimeEstimate || "זמן לא ידוע"}</span>
                         <button class="text-slate-400 hover:text-red-500" onclick="event.stopPropagation(); deleteRoom('${room.id}')">מחק</button>
                     </div>
                 `;
@@ -386,7 +501,7 @@
         function deleteRoom(id) {
             if(confirm('למחוק את החדר הזה?')) {
                 houseMap = houseMap.filter(r => r.id !== id);
-                saveData(); // Save deletion to LocalStorage!
+                saveData();
                 renderHouseMap();
             }
         }
@@ -400,6 +515,8 @@
 
             const container = document.getElementById('timeline-container');
             container.innerHTML = '';
+
+            if (!room.data.stations) return;
 
             room.data.stations.forEach((station, sIdx) => {
                 const tasksHtml = station.tasks.map((task, tIdx) => {
@@ -437,9 +554,8 @@
             if(room) {
                 if(!room.taskStates) room.taskStates = {};
                 room.taskStates[taskId] = checkboxElem.checked;
-                saveData(); // Save to LocalStorage!
+                saveData(); 
                 
-                // Update UI visually
                 const label = document.getElementById(`label_${roomId}_${taskId}`);
                 if(checkboxElem.checked) label.classList.add('opacity-50', 'line-through');
                 else label.classList.remove('opacity-50', 'line-through');
@@ -447,4 +563,4 @@
         }
     </script>
 </body>
-    </html>
+</html>
